@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Idle Lumberjack Game</title>
+  <!-- Include Bulma CSS -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+</head>
+<body>
+  <section class="section">
+    <div class="container">
+      <h1 class="title">Idle Lumberjack Game</h1>
+      <p>Logs: <span id="logCount">0</span></p>
+      <button class="button is-primary" id="chopButton" onclick="chopWood()">Chop Wood</button>
+      <button class="button is-info" id="upgradeButton" onclick="upgradeEfficiency()">Upgrade Axe (Cost: 10 Logs)</button>
+    </div>
+  </section>
+
+  <script>
+    let logCount = 0;
+    let axeLevel = 1;
+
+    // Initialize IndexedDB
+    const request = indexedDB.open("LumberjackGameDB", 1);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+      db.createObjectStore("gameData", { keyPath: "id" });
+    };
+
+    request.onsuccess = (event) => {
+      const db = event.target.result;
+      const transaction = db.transaction(["gameData"], "readwrite");
+      const store = transaction.objectStore("gameData");
+
+      // Retrieve the logCount and axeLevel from IndexedDB (if available)
+      const getLogCountRequest = store.get(1);
+      getLogCountRequest.onsuccess = (e) => {
+        if (getLogCountRequest.result) {
+          logCount = getLogCountRequest.result.logCount;
+          axeLevel = getLogCountRequest.result.axeLevel;
+          updateLogCount();
+        }
+      };
+
+      transaction.oncomplete = () => {
+        db.close();
+      };
+    };
+
+    function chopWood() {
+      logCount += axeLevel;
+      updateLogCount();
+      saveGameData();
+    }
+
+    function upgradeEfficiency() {
+      if (logCount >= 10) {
+        logCount -= 10;
+        axeLevel++;
+        updateLogCount();
+        saveGameData();
+      } else {
+        alert("You need at least 10 logs to upgrade your axe.");
+      }
+    }
+
+    function updateLogCount() {
+      document.getElementById("logCount").textContent = logCount;
+      document.getElementById("upgradeButton").textContent = `Upgrade Axe (Cost: 10 Logs)`;
+    }
+
+    function saveGameData() {
+      const request = indexedDB.open("LumberjackGameDB", 1);
+
+      request.onsuccess = (event) => {
+        const db = event.target.result;
+        const transaction = db.transaction(["gameData"], "readwrite");
+        const store = transaction.objectStore("gameData");
+
+        // Store the current game data in IndexedDB
+        store.put({ id: 1, logCount, axeLevel });
+        
+        transaction.oncomplete = () => {
+          db.close();
+        };
+      };
+    }
+
+    // Periodically update the log count
+    setInterval(function () {
+      chopWood();
+    }, 1000);
+
+    updateLogCount();
+  </script>
+</body>
+</html>
