@@ -4,14 +4,29 @@
   <title>Idle Lumberjack Game</title>
   <!-- Include Bulma CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.3/css/bulma.min.css">
+  <style>
+    /* Custom styles for mobile optimization */
+    .game-container {
+      padding: 20px;
+    }
+    .button-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  </style>
 </head>
 <body>
   <section class="section">
-    <div class="container">
+    <div class="container game-container">
       <h1 class="title">Idle Lumberjack Game</h1>
-      <p>Logs: <span id="logCount">0</span></p>
-      <button class="button is-primary" id="chopButton" onclick="chopWood()">Chop Wood</button>
-      <button class="button is-info" id="upgradeButton" onclick="upgradeEfficiency()">Upgrade Axe (Cost: 10 Logs)</button>
+      <div class="has-text-centered">
+        <p>Logs: <span id="logCount">0</span></p>
+      </div>
+      <div class="button-container">
+        <button class="button is-primary is-medium" id="chopButton" onclick="chopWood()">Chop Wood</button>
+        <button class="button is-info is-medium" id="upgradeButton" onclick="upgradeEfficiency()">Upgrade Axe (Cost: 10 Logs)</button>
+      </div>
     </div>
   </section>
 
