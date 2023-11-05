@@ -1,0 +1,12 @@
+/* Custom styles for mobile optimization */
+@media (max-width: 768px) {
+  .game-container {
+    padding: 10px;
+  }
+  .button-container {
+    margin-top: 10px;
+  }
+  .button.is-medium {
+    padding: 10px 20px;
+  }
+}
